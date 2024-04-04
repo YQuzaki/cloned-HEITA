@@ -126,19 +126,7 @@ if prompt:
     # 发送请求并获取AI响应
     with st.spinner("黑塔小人正在摸鱼💜，请稍等……"):
         response = get_HEITA_response(prompt, st.session_state["memory"]) 
-        # 构造音频文件的URL（确保这个URL返回音频文件）
-        audio_file = f"https://9b98eba910d46bae6c.gradio.live//?spk=HEITA&text={response}&lang=zh"
-    st.info("音频加载较慢，会自动播放...（文字越多生成越慢10-30s不等），卡顿请刷新页面")
-    # 创建包含自动播放音频的HTML字符串
-    audio_html = f"""  
-    <audio controls autoplay>  
-        <source src="{audio_file}" type="audio/mpeg">  
-        您的浏览器不支持 audio 元素。  
-    </audio>  
-    """
-
-    # 使用st.components.v1.html来嵌入HTML内容
-    st.markdown(audio_html, unsafe_allow_html=True)
+        
         # 将AI的响应添加到历史记录并显示
     st.session_state["messages"].append({"role": "ai", "content": response})
 
