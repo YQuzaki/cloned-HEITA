@@ -88,11 +88,11 @@ message_box_style = """
 }  
 
 .message-box.human {  
-    background-color: #f2f2f2;  
+    background-color: #e0e0ff;  
 }  
 
 .message-box.ai {  
-    background-color: #e0e0ff;  
+    background-color: #DDA0DD;  
 }  
 
 .role-label {  
