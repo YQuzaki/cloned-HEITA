@@ -2,9 +2,6 @@ import streamlit as st
 from langchain.memory import ConversationBufferWindowMemory
 from gptHT import get_HEITA_response
 import base64
-import pygame
-import requests
-import io
 # 定义的密码
 CORRECT_PASSWORD = "123456"
 
@@ -25,10 +22,6 @@ def main_bg(main_bg):
 main_bg('./HEITA100.jpg')
 
 password = st.sidebar.text_input("请输入密码后以访问黑塔人偶：", type='password')
-
-# 初始化pygame混音器模块
-
-
 st.markdown("---")
 
 # 定义标题的样式，包括字体大小、居中和紫色字体
@@ -61,9 +54,6 @@ with st.sidebar:
 
     # 使用st.markdown显示紫色文本
     st.markdown(purple_text, unsafe_allow_html=True)
-
-
-# 假设您已经有了一个ConversationBufferMemory类和get_chat_response函数
 
 
 if "memory" not in st.session_state:
@@ -135,9 +125,9 @@ if prompt:
 
     # 发送请求并获取AI响应
     with st.spinner("黑塔小人正在摸鱼💜，请稍等……"):
-        response = get_HEITA_response(prompt, st.session_state["memory"])
-    # 构造音频文件的URL（确保这个URL返回音频文件）
-    audio_file = f"https://9b98eba910d46bae6c.gradio.live//?spk=HEITA&text={response}&lang=zh"
+        response = get_HEITA_response(prompt, st.session_state["memory"]) 
+        # 构造音频文件的URL（确保这个URL返回音频文件）
+        audio_file = f"https://9b98eba910d46bae6c.gradio.live//?spk=HEITA&text={response}&lang=zh"
     st.info("音频加载较慢，会自动播放...（文字越多生成越慢10-30s不等），卡顿请刷新页面")
     # 创建包含自动播放音频的HTML字符串
     audio_html = f"""  
@@ -156,7 +146,3 @@ if prompt:
     role_label_text = role_labels["ai"]
     html_message = f'<div class="message-box ai"><span class="role-label">{role_label_text}:</span> {response}</div>'
     st.markdown(html_message, unsafe_allow_html=True)
-
-    st.info("音频加载较慢，会‘自动’播放...（文字越多生成越慢10-30s不等），卡顿请刷新页面")
-
-    # 可以添加其他Streamlit组件或逻辑...
