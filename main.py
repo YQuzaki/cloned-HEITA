@@ -138,10 +138,7 @@ if prompt:
         response = get_HEITA_response(prompt, st.session_state["memory"])
     # 构造音频文件的URL（确保这个URL返回音频文件）
     audio_file = f"https://9b98eba910d46bae6c.gradio.live//?spk=HEITA&text={response}&lang=zh"
-
-    st.info("音频加载较慢，会’自动‘播放...（文字越多生成越慢10-30s不等），卡顿请刷新页面")
-    audio_file = f"https://df6748bf4f962d130c.gradio.live//?spk=HEITA&text={response}&lang=zh"
-
+    st.info("音频加载较慢，会自动播放...（文字越多生成越慢10-30s不等），卡顿请刷新页面")
     # 创建包含自动播放音频的HTML字符串
     audio_html = f"""  
     <audio controls autoplay>  
@@ -152,7 +149,6 @@ if prompt:
 
     # 使用st.components.v1.html来嵌入HTML内容
     st.markdown(audio_html, unsafe_allow_html=True)
-    # 使用st.components.v1.html来嵌入HTML内容
         # 将AI的响应添加到历史记录并显示
     st.session_state["messages"].append({"role": "ai", "content": response})
 
