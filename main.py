@@ -2,60 +2,11 @@ import streamlit as st
 from langchain.memory import ConversationBufferWindowMemory
 from gptHT import get_HEITA_response
 import base64
-import time
 import pygame
-import threading
 import requests
 import io
 # 定义的密码
 CORRECT_PASSWORD = "123456"
-
-
-def play_audio_from_api(api_url):
-    # 使用requests从API获取音频数据
-    response = requests.get(api_url)
-
-    # 确保请求成功
-    if response.status_code == 200:
-        audio_data = response.content
-
-        # 将音频数据转换为BytesIO对象
-        audio_stream = io.BytesIO(audio_data)
-
-        # 初始化pygame的mixer模块
-        pygame.mixer.init()
-
-        # 加载音频流
-        pygame.mixer.music.load(audio_stream)
-
-        # 播放音频
-        pygame.mixer.music.play()
-
-        # 等待音频播放完毕
-        while pygame.mixer.music.get_busy():
-            continue
-
-            # 清理资源
-        pygame.mixer.quit()
-    else:
-        print(f"Error fetching audio from API: {response.status_code}")
-
-        # 设置API的URL
-
-
-def check_password():
-    # 提示用户输入密码
-    password = st.text_input("请输入密码以访问黑塔人偶：")
-
-    # 验证密码是否正确
-    if password == CORRECT_PASSWORD:
-        st.session_state.is_authenticated = True
-        st.success("密码正确，欢迎访问黑塔人偶！")
-    else:
-        st.error("密码错误，请重试。")
-        return False
-
-    return True
 
 def main_bg(main_bg):
     main_bg_ext = "png"
@@ -73,19 +24,33 @@ def main_bg(main_bg):
 # 调用
 main_bg('./HEITA100.jpg')
 
+import requests
+from datetime import datetime
 
+url = "https://api.songzixian.com/api/daily-word"
 
+data_source = "LOCAL_DAILY_WORD"
+data_value = datetime.now().strftime("%Y-%m-%d")  # 默认当前日期
+password = st.sidebar.text_input("请输入密码后以访问黑塔人偶：", type='password')
+params = {
+    "dataSource": data_source,
+}
 
+response = requests.get(url, params=params)
+data = response.json()
+content = data.get('data', {}).get('content')
+date = data.get('data', {}).get('date')
 
+purple_text_template = """  
+    <p style="color: pink;font-size: 14px;">💜黑塔每日说💜：
+    <br>{content}</p>  
+    """
+purple_text = purple_text_template.format(content=content)
 
+# 使用st.markdown显示紫色文本
+st.markdown(purple_text, unsafe_allow_html=True)
 
-
-html_title = """  
-<h1 style="color: purple;font-size: 20px;">转圈圈小游戏80满分(游戏期间请勿点击其他操作~</h1>  
-"""
-
-# 使用st.markdown显示HTML标题
-st.markdown(html_title, unsafe_allow_html=True)
+# 初始化pygame混音器模块
 
 
 st.markdown("---")
@@ -99,6 +64,9 @@ st.markdown(centered_purple_title, unsafe_allow_html=True)
 
 
 with st.sidebar:
+
+
+
     st.image("./HEITA-1.png")
     # 定义包含紫色文本的HTML字符串
     purple_text = """  
@@ -117,6 +85,8 @@ with st.sidebar:
 
     # 使用st.markdown显示紫色文本
     st.markdown(purple_text, unsafe_allow_html=True)
+    st.write(date)
+
 
 # 假设您已经有了一个ConversationBufferMemory类和get_chat_response函数
 
@@ -175,7 +145,6 @@ for message in st.session_state["messages"]:
     st.markdown(html_message, unsafe_allow_html=True)
 
 # 渲染聊天输入和发送逻辑
-password = st.sidebar.text_input("请输入密码后以访问黑塔人偶：", type='password')
 prompt = st.chat_input("请输入你对黑塔的困惑：")
 if prompt:
     if password != "123456":
@@ -192,13 +161,29 @@ if prompt:
     # 发送请求并获取AI响应
     with st.spinner("黑塔小人正在摸鱼💜，请稍等……"):
         response = get_HEITA_response(prompt, st.session_state["memory"])
+    # 构造音频文件的URL（确保这个URL返回音频文件）
+    audio_file = f"https://9b98eba910d46bae6c.gradio.live//?spk=HEITA&text={response}&lang=zh"
 
-        api_url = f"https://9b98eba910d46bae6c.gradio.live//?spk=HEITA&text={response}&lang=zh"
-        # 调用函数播放音频
-        play_audio_from_api(api_url)
+    # 创建一个不包含controls属性的HTML音频标签
+    audio_html = f"""    
+        <audio autoplay>    
+            <source src="{audio_file}" type="audio/mpeg">    
+            您的浏览器不支持 audio 元素。    
+        </audio>    
+        """
+
+    # 显示一条信息，告诉用户音频正在加载
+    # 使用st.markdown显示音频，并允许不安全的HTML
+    st.markdown(audio_html, unsafe_allow_html=True)
+    # 使用st.components.v1.html来嵌入HTML内容
         # 将AI的响应添加到历史记录并显示
     st.session_state["messages"].append({"role": "ai", "content": response})
+
     # 使用新的标签文本渲染AI响应
     role_label_text = role_labels["ai"]
     html_message = f'<div class="message-box ai"><span class="role-label">{role_label_text}:</span> {response}</div>'
     st.markdown(html_message, unsafe_allow_html=True)
+
+    st.info("音频加载较慢，会‘自动’播放...（文字越多生成越慢10-30s不等），卡顿请刷新页面")
+
+    # 可以添加其他Streamlit组件或逻辑...
