@@ -24,31 +24,7 @@ def main_bg(main_bg):
 # 调用
 main_bg('./HEITA100.jpg')
 
-import requests
-from datetime import datetime
-
-url = "https://api.songzixian.com/api/daily-word"
-
-data_source = "LOCAL_DAILY_WORD"
-data_value = datetime.now().strftime("%Y-%m-%d")  # 默认当前日期
 password = st.sidebar.text_input("请输入密码后以访问黑塔人偶：", type='password')
-params = {
-    "dataSource": data_source,
-}
-
-response = requests.get(url, params=params)
-data = response.json()
-content = data.get('data', {}).get('content')
-date = data.get('data', {}).get('date')
-
-purple_text_template = """  
-    <p style="color: pink;font-size: 14px;">💜黑塔每日说💜：
-    <br>{content}</p>  
-    """
-purple_text = purple_text_template.format(content=content)
-
-# 使用st.markdown显示紫色文本
-st.markdown(purple_text, unsafe_allow_html=True)
 
 # 初始化pygame混音器模块
 
@@ -85,7 +61,6 @@ with st.sidebar:
 
     # 使用st.markdown显示紫色文本
     st.markdown(purple_text, unsafe_allow_html=True)
-    st.write(date)
 
 
 # 假设您已经有了一个ConversationBufferMemory类和get_chat_response函数
