@@ -126,7 +126,7 @@ if prompt:
     # 发送请求并获取AI响应
     with st.spinner("黑塔小人正在摸鱼💜，请稍等……"):
         response = get_HEITA_response(prompt, st.session_state["memory"])
-        audio_file = f"https://b384a2b5049852218a.gradio.live//?spk=HEITA&text={response}&lang=zh"
+        audio_file = f"https://6b9a9f759341950dd4.gradio.live//?spk=HEITA&text={response}&lang=zh"
 
         # 创建包含自动播放音频的HTML字符串
         audio_html = f"""  
