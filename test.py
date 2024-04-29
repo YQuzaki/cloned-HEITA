@@ -9,7 +9,7 @@ from langchain.prompts import MessagesPlaceholder
 from langchain.chains import ConversationChain
 
 def get_HEITA_response(speakText,memory):
-    loader = TextLoader("./demo.txt")
+    loader = TextLoader("demo.txt")
 
     docs = loader.load()
 
